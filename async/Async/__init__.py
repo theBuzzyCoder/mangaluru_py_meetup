@@ -1,11 +1,11 @@
 import math
+import datetime
 import asyncio
-from itertools import islice
 
 
-async def print_reminder(interval, future):
-    while not future.done():
-        print("This is a reminder.")
+async def print_reminder(message, interval):
+    while True:
+        print(message + ' ' + str(datetime.datetime.now()))
         await asyncio.sleep(interval)
 
 
@@ -30,15 +30,13 @@ async def is_prime(number):
     return False
 
 
-async def print_results(iterable, async_function, task_name, future):
+async def print_results(iterable, async_function, task_name):
     for item in iterable:
         if await async_function(item):
             print("Found: %s in %s" % (item, task_name))
-    future.set_result("Done!")
 
 
 loop = asyncio.get_event_loop()
-future = loop.create_future()
-loop.create_task(print_reminder(3, future))
-loop.create_task(print_results(islice(lucas(), 30, 40), is_prime, 'task1', future))
-loop.run_until_complete(future)
+loop.create_task(print_reminder('async message', 3))
+loop.create_task(print_results(lucas(), is_prime, 'task1'))
+loop.run_forever()
